@@ -199,7 +199,7 @@ sudo apt-get install libtesseract-dev
 
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/your-username/rag-pipeline.git
+git clone https://github.com/mansigambhir-13/rag-pipeline.git
 cd rag-pipeline
 ```
 
@@ -754,19 +754,6 @@ print(f"Sources: {len(result['sources'])}")
 - Index optimization metrics
 - Storage utilization data
 
-### 🔍 Search Analytics
-
-**Query Analysis**
-- Search frequency and patterns
-- Popular query types
-- User behavior analysis
-- Success rate measurements
 
 
-## 🙏 Acknowledgments
 
-- **Wasserstoff AI**: For providing the internship opportunity
-- **OpenAI**: For the powerful GPT and embedding models
-- **Qdrant**: For the excellent vector database solution
-- **Streamlit**: For the amazing web app framework
-- **Open Source Community**: For the countless libraries that make this project possible
