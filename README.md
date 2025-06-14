@@ -5,6 +5,9 @@
 A comprehensive Retrieval-Augmented Generation (RAG) system that processes documents, creates semantic embeddings, and enables intelligent search and theme analysis capabilities.
 
 ---
+## link to presentation 
+
+https://mansigambhir-13.github.io/rag-presentation/
 
 ## 📋 Table of Contents
 
