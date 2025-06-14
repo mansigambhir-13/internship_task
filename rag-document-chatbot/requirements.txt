@@ -1,0 +1,71 @@
+# Core dependencies for the RAG pipeline
+
+# Environment and configuration
+python-dotenv>=1.0.0
+
+# Document processing and OCR
+PyMuPDF>=1.23.0
+pytesseract>=0.3.10
+Pillow>=10.0.0 
+easyocr>=1.7.0
+
+# OpenAI integration
+openai>=1.0.0
+
+# Google AI integration
+google-generativeai>=0.3.0
+
+# Text processing and embeddings
+sentence-transformers>=2.2.2
+transformers>=4.30.0
+torch>=2.0.0
+
+# Vector database
+qdrant-client>=1.6.0
+
+# Data processing
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# NLP and text processing
+spacy>=3.7.0
+nltk>=3.8.0
+scikit-learn>=1.3.0
+requests>=2.31.0
+# Web framework (for future chatbot interface)
+fastapi>=0.104.0
+uvicorn>=0.24.0
+streamlit>=1.28.0
+
+# Image processing enhancements
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+
+# Utilities
+pathlib2>=2.3.7
+tqdm>=4.65.0
+requests>=2.31.0
+aiohttp>=3.9.0
+
+# Development and testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+jupyter>=1.0.0
+notebook>=7.0.0
+psutil>=0.3.0
+# Optional dependencies for advanced features
+
+qdrant-client
+Pillow
+aiohttp 
+openai
+google-generativeai
+
+# Logging and monitoring
+loguru>=0.7.0
+
+# Optional: Alternative OCR engines
+# tesserocr>=2.6.0
+# paddleocr>=2.7.0
+opencv-python>=4.8.0

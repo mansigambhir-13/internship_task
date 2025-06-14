@@ -1,0 +1,168 @@
+"""
+Configuration Settings
+Loads and manages environment variables for the RAG pipeline
+Fixed validation logic for local embeddings
+"""
+
+import os
+import sys
+from pathlib import Path
+from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+class Settings:
+    """Configuration settings loaded from environment variables"""
+    
+    # OpenAI Configuration
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    
+    # Gemini Configuration
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    
+    # Qdrant Configuration
+    QDRANT_URL: str = os.getenv("QDRANT_URL", "localhost:6333")
+    QDRANT_API_KEY: str = os.getenv("QDRANT_API_KEY", "")
+    COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "document_embeddings")
+    
+    # Embedding Configuration
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+    EMBEDDING_STORAGE_DIR: str = os.getenv("EMBEDDING_STORAGE_DIR", "./data/embeddings_storage")
+    BATCH_SIZE: int = int(os.getenv("BATCH_SIZE", "50"))
+    
+    # PDF Processing Configuration
+    PDF_DIRECTORY: str = os.getenv("PDF_DIRECTORY", "./docs")
+    USE_OCR: bool = os.getenv("USE_OCR", "true").lower() == "true"
+    EXTRACT_KEYWORDS: bool = os.getenv("EXTRACT_KEYWORDS", "true").lower() == "true"
+    MIN_PARAGRAPH_LENGTH: int = int(os.getenv("MIN_PARAGRAPH_LENGTH", "50"))
+    MAX_PARAGRAPH_LENGTH: int = int(os.getenv("MAX_PARAGRAPH_LENGTH", "2000"))
+    
+    # OCR Configuration
+    OCR_ENGINE: str = os.getenv("OCR_ENGINE", "tesseract")
+    OCR_DPI: int = int(os.getenv("OCR_DPI", "300"))
+    OCR_LANGUAGE: str = os.getenv("OCR_LANGUAGE", "en")
+    ENHANCE_IMAGE: bool = os.getenv("ENHANCE_IMAGE", "true").lower() == "true"
+    USE_ADVANCED_NLP: bool = os.getenv("USE_ADVANCED_NLP", "true").lower() == "true"
+    
+    # Processing Configuration
+    MAX_RETRIES: int = int(os.getenv("MAX_RETRIES", "3"))
+    REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "60"))
+    DEDUPLICATE: bool = os.getenv("DEDUPLICATE", "true").lower() == "true"
+    
+    # Debug Configuration
+    DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
+    
+    # Data Directories
+    PROCESSED_DOCUMENTS_DIR: str = "data/processed_documents"
+    CHUNKED_DOCUMENTS_DIR: str = "data/chunked_documents"
+    
+    @classmethod
+    def create_directories(cls):
+        """Create necessary directories if they don't exist"""
+        directories = [
+            cls.PDF_DIRECTORY,
+            cls.EMBEDDING_STORAGE_DIR,
+            cls.PROCESSED_DOCUMENTS_DIR,
+            cls.CHUNKED_DOCUMENTS_DIR,
+            "data",
+            "config",
+            "src/utils",
+            "tests",
+            "notebooks",
+            "web_interface",
+            "scripts"
+        ]
+        
+        for directory in directories:
+            Path(directory).mkdir(parents=True, exist_ok=True)
+    
+    @classmethod
+    def is_using_openai_embeddings(cls) -> bool:
+        """Check if using OpenAI embeddings"""
+        return cls.EMBEDDING_MODEL.startswith("text-embedding") and cls.OPENAI_API_KEY
+    
+    @classmethod
+    def is_using_local_embeddings(cls) -> bool:
+        """Check if using local embeddings"""
+        return not cls.is_using_openai_embeddings()
+    
+    @classmethod
+    def validate_config(cls) -> bool:
+        """Validate that required configuration is present"""
+        required_fields = []
+        warnings = []
+        
+        # Only check OpenAI API key if using OpenAI embeddings
+        if cls.EMBEDDING_MODEL.startswith("text-embedding") and not cls.OPENAI_API_KEY:
+            warnings.append("OpenAI API key not provided - will use local embeddings instead")
+            print(f"⚠️  {warnings[-1]}")
+        
+        # Only check Qdrant API key if using cloud Qdrant
+        if "cloud.qdrant.io" in cls.QDRANT_URL and not cls.QDRANT_API_KEY:
+            required_fields.append("QDRANT_API_KEY (required for Qdrant Cloud)")
+        
+        # Check if PDF directory exists
+        if not Path(cls.PDF_DIRECTORY).exists():
+            warnings.append(f"PDF directory does not exist: {cls.PDF_DIRECTORY}")
+            print(f"⚠️  {warnings[-1]}")
+        
+        if required_fields:
+            print(f"❌ Missing required configuration: {', '.join(required_fields)}")
+            return False
+        
+        # Show what we're using
+        if cls.is_using_openai_embeddings():
+            print(f"✅ Using OpenAI embeddings: {cls.EMBEDDING_MODEL}")
+        else:
+            print(f"✅ Using local embeddings: {cls.EMBEDDING_MODEL}")
+        
+        if "cloud.qdrant.io" in cls.QDRANT_URL:
+            print(f"✅ Using Qdrant Cloud: {cls.QDRANT_URL}")
+        else:
+            print(f"✅ Using local Qdrant: {cls.QDRANT_URL}")
+        
+        return True
+    
+    @classmethod
+    def get_qdrant_config(cls) -> dict:
+        """Get Qdrant configuration parameters"""
+        if "cloud.qdrant.io" in cls.QDRANT_URL:
+            # Cloud Qdrant
+            return {
+                "url": cls.QDRANT_URL,
+                "api_key": cls.QDRANT_API_KEY
+            }
+        else:
+            # Local Qdrant
+            if ":" in cls.QDRANT_URL:
+                host, port = cls.QDRANT_URL.split(":")
+                return {
+                    "host": host,
+                    "port": int(port)
+                }
+            else:
+                return {
+                    "host": cls.QDRANT_URL,
+                    "port": 6333
+                }
+    
+    @classmethod
+    def get_embedding_service_info(cls) -> dict:
+        """Get information about the embedding service being used"""
+        if cls.is_using_openai_embeddings():
+            return {
+                "service": "openai",
+                "model": cls.EMBEDDING_MODEL,
+                "api_key_configured": bool(cls.OPENAI_API_KEY)
+            }
+        else:
+            return {
+                "service": "sentence_transformers",
+                "model": cls.EMBEDDING_MODEL,
+                "local": True
+            }
+
+# Create settings instance
+settings = Settings()
