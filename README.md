@@ -129,7 +129,7 @@ graph TD
 ### 🐍 Core Technologies
 - **Python 3.8+**: Primary programming language
 - **Streamlit**: Web application framework
-- **FastAPI**: RESTful API endpoints (optional)
+
 
 ### 📄 Document Processing
 - **PyMuPDF (fitz)**: PDF reading and text extraction
