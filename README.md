@@ -280,6 +280,10 @@ rag-pipeline/
 ```
 
 ---
+## streamlit view 
+![Uploading image.png…]()
+
+
 
 ## 🚀 Usage Guide
 
