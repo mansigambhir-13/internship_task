@@ -309,26 +309,6 @@ python main.py --batch-mode
 python main.py --force
 ```
 
-#### 🎯 Running Specific Stages
-```bash
-# Run specific stages
-python main.py --stages ocr chunking
-
-# Run from specific stage onwards
-python main.py --stages embeddings search themes
-
-# Available stages: ocr, chunking, embeddings, search, themes
-```
-
-#### 🔍 Specialized Modes
-```bash
-# Launch search interface only
-python main.py --search-only
-
-# Launch theme analysis only
-python main.py --themes-only
-```
-
 ### 🌐 Web Dashboard
 
 #### 🚀 Starting the Dashboard
