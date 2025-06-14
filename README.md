@@ -221,16 +221,7 @@ pip install -r requirements.txt
 
 4. **Setup Qdrant Database**
 
-**Option A: Local Qdrant**
-```bash
-# Using Docker
-docker run -p 6333:6333 qdrant/qdrant
-
-# Or using Docker Compose
-docker-compose up -d qdrant
-```
-
-**Option B: Qdrant Cloud**
+**Qdrant Cloud**
 - Sign up at [Qdrant Cloud](https://cloud.qdrant.io/)
 - Create a cluster and get your URL and API key
 
